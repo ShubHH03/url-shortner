@@ -7,7 +7,7 @@ app.use(cors())
 app.use(express.json())
 
 //routes import
-import router from "./routes/route.js"
+import router from "./routes/url.route.js"
 
 //routes declaration
 app.use("/api", router)
