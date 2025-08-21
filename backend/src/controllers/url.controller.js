@@ -19,9 +19,23 @@ const generateShortId = asyncHandler(async(req, res) => {
     })
 
     console.log("Url stored", storeUrl);
-    
-    return res.status(201).json({ message: "short Id generated"})
 
+    const newShortUrl = `${process.env.BASE_URL}/${shortCode}`;
+    
+    return res.status(201).json({
+        success: true,
+        message: "Short URL created successfully",
+        data: {
+            originalUrl,
+            shortCode,
+            newShortUrl
+        }
+    });
+
+})
+
+const getOriginalUrl = asyncHandler(async(req, res) => {
+    
 })
 
 export {
