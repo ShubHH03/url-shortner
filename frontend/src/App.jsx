@@ -1,7 +1,42 @@
 import { useState } from "react";
+import axios from "axios";
+import { Copy } from "lucide-react"; // optional icon library
 
 function App() {
   const [url, setUrl] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [shortenedUrl, setShortenedUrl] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const handleSubmit = async () => {
+    try {
+      if (!url) {
+        alert("Please enter a URL");
+        return;
+      }
+
+      setShortenedUrl("");
+      setLoading(true);
+
+      const response = await axios.post("http://localhost:8001/api/shorten", {
+        url,
+      });
+
+      console.log(response);
+      setShortenedUrl(response.data.data.newShortUrl);
+      setUrl("");
+      setLoading(false);
+    } catch (error) {
+      console.log("Error while fetching url from db: ", error);
+      setLoading(false);
+    }
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(shortenedUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <div className="w-screen h-screen m-0 p-0 bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col items-center justify-center overflow-hidden">
@@ -28,11 +63,33 @@ function App() {
           {/* Button */}
           <button
             type="submit"
-            className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold shadow-md hover:scale-105 hover:shadow-lg transition-transform duration-200"
+            onClick={handleSubmit}
+            disabled={loading}
+            className="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white font-semibold shadow-md hover:scale-105 hover:shadow-lg transition-transform duration-200 disabled:opacity-50"
           >
-            Submit
+            {loading ? "Shortening..." : "Submit"}
           </button>
         </div>
+
+        {/* Result Section */}
+        {shortenedUrl && (
+          <div className="mt-6 flex items-center justify-between bg-gray-900/60 rounded-xl px-4 py-3 border border-gray-700">
+            <a
+              href={shortenedUrl}
+              target="_blank"
+              className="text-cyan-400 font-medium hover:underline truncate"
+            >
+              {shortenedUrl}
+            </a>
+            <button
+              onClick={handleCopy}
+              className="ml-3 flex items-center gap-1 px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-400 hover:bg-cyan-500/30 transition-colors"
+            >
+              <Copy size={16} />
+              {copied ? "Copied!" : "Copy"}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Footer */}
