@@ -8,6 +8,8 @@ function App() {
   const [shortenedUrl, setShortenedUrl] = useState("");
   const [copied, setCopied] = useState(false);
 
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8001";
+  
   const handleSubmit = async () => {
     try {
       if (!url) {
@@ -18,7 +20,7 @@ function App() {
       setShortenedUrl("");
       setLoading(true);
 
-      const response = await axios.post("http://localhost:8001/api/shorten", {
+      const response = await axios.post(`${API_BASE_URL}/api/shorten`, {
         url,
       });
 
