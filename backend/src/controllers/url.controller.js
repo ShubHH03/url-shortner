@@ -9,6 +9,25 @@ const generateShortId = asyncHandler(async (req, res) => {
     res.status(404).json({ error: "url is required" });
   }
 
+  const isUrlValid = (url) => {
+    try {
+      const parsed = new URL(url);
+      return parsed.protocol === "http:" || parsed.protocol === "https:";
+    } catch (err) {
+      return false;
+    }
+  };
+
+  if (!isUrlValid(url)) {
+    return res.status(400).json({ error: "Invalid URL" });
+  }
+
+  if (url.includes(process.env.BASE_URL)) {
+    return res
+      .status(400)
+      .json({ error: "Cannot shorten URLs from this domain" });
+  }
+
   const shortCode = nanoid(8);
 
   const storeUrl = await Url.create({
@@ -96,16 +115,22 @@ const getStats = asyncHandler(async (req, res) => {
 });
 
 const deleteUrl = asyncHandler(async (req, res) => {
-  const {shortCode} = req.params;
+  const { shortCode } = req.params;
 
-  const originalUrl = await Url.findOneAndDelete({shortCode})
+  const originalUrl = await Url.findOneAndDelete({ shortCode });
 
   return res.status(200).json({
     success: true,
     message: "Url deleted successfully",
     deletedCode: originalUrl.shortCode,
-    deletedUrl: originalUrl.url
-  })
+    deletedUrl: originalUrl.url,
+  });
 });
 
-export { generateShortId, redirectToOriginalUrl, updateOriginalUrl, getStats, deleteUrl };
+export {
+  generateShortId,
+  redirectToOriginalUrl,
+  updateOriginalUrl,
+  getStats,
+  deleteUrl,
+};
