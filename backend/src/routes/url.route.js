@@ -6,7 +6,7 @@ const router = Router();
 
 router.route("/healthcheck").post(healthCheck)
 router.route("/shorten").post(generateShortId)
-router.route("/:shortCode").get(redirectToOriginalUrl).put(updateOriginalUrl).delete(deleteUrl)
+router.route("/:shortCode").put(updateOriginalUrl).delete(deleteUrl)
 router.route("/stats/:shortCode").get(getStats)
 
 
