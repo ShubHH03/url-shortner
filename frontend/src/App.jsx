@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Copy } from "lucide-react"; // optional icon library
+import { Analytics } from "@vercel/analytics/react";
 
 function App() {
   const [url, setUrl] = useState("");
@@ -98,6 +99,7 @@ function App() {
       <p className="mt-6 text-gray-400 text-sm z-10">
         🚀 Paste a link above and get a shorter version instantly!
       </p>
+      <Analytics />
     </div>
   );
 }
